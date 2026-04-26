@@ -15,6 +15,8 @@ const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+const LOGIN_COOLDOWN_MS = 2000;
+
 export default function AdminLoginPage() {
   const { login } = useAuth();
   const router = useRouter();
@@ -22,9 +24,16 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [lastAttempt, setLastAttempt] = useState(0);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    if (Date.now() - lastAttempt < LOGIN_COOLDOWN_MS) {
+      toast.error("Please wait before trying again");
+      return;
+    }
+
     const result = loginSchema.safeParse({ email, password });
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
@@ -36,6 +45,7 @@ export default function AdminLoginPage() {
       return;
     }
     setErrors({});
+    setLastAttempt(Date.now());
     setLoading(true);
     try {
       await login(email, password);
