@@ -29,7 +29,7 @@ export default function UsersPage() {
   async function loadUsers() {
     setLoading(true);
     try {
-      const res = await apiClient.get("/admin/users") as { data: User[] };
+      const res = await apiClient.get("/api/v1/admin/users") as { data: User[] };
       setUsers(res.data || []);
     } catch (err: any) {
       toast.error(err.message || "Failed to load users");

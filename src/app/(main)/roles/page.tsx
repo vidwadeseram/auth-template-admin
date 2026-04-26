@@ -22,7 +22,7 @@ export default function RolesPage() {
   async function loadRoles() {
     setLoading(true);
     try {
-      const res = await apiClient.get("/admin/roles") as { data: Role[] };
+      const res = await apiClient.get("/api/v1/admin/roles") as { data: Role[] };
       setRoles(res.data || []);
     } catch (err: any) {
       toast.error(err.message || "Failed to load roles");

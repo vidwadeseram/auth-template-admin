@@ -26,7 +26,7 @@ export default function TenantsPage() {
   async function loadTenants() {
     setLoading(true);
     try {
-      const res = await apiClient.get("/admin/tenants") as { data: Tenant[] };
+      const res = await apiClient.get("/api/v1/admin/tenants") as { data: Tenant[] };
       setTenants(res.data || []);
     } catch (err: any) {
       toast.error(err.message || "Failed to load tenants");

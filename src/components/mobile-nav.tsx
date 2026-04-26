@@ -26,8 +26,8 @@ export function MobileNav({ isMultiTenant }: { isMultiTenant?: boolean }) {
     <div className="md:hidden flex items-center justify-between border-b px-4 py-3 bg-card">
       <h1 className="text-lg font-bold">Admin Panel</h1>
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetTrigger>
-          <Button variant="ghost" size="icon"><Menu className="h-5 w-5" /></Button>
+        <SheetTrigger render={<Button variant="ghost" size="icon" />}>
+          <Menu className="h-5 w-5" />
         </SheetTrigger>
         <SheetContent side="left" className="w-64 p-0">
           <div className="p-6 border-b">

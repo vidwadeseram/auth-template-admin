@@ -1,13 +1,10 @@
 "use client";
 
 import { use } from "react";
-import { useAuth } from "@vidwadeseram/auth-ui-shared";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 export default function UserDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const { user: currentUser } = useAuth();
 
   return (
     <div className="space-y-6">
