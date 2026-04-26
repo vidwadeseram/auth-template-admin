@@ -19,7 +19,7 @@ export default function ForgotPasswordPage() {
     e.preventDefault();
     setLoading(true);
     try { await forgotPassword(email); setSent(true); toast.success("Reset link sent if account exists"); }
-    catch (err: any) { toast.error(err.message || "Failed"); }
+    catch (err: unknown) { toast.error((err instanceof Error ? err.message : null) || "Failed"); }
     finally { setLoading(false); }
   }
 

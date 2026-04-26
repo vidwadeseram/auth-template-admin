@@ -28,8 +28,8 @@ export default function TenantsPage() {
     try {
       const res = await apiClient.get("/api/v1/admin/tenants") as { data: Tenant[] };
       setTenants(res.data || []);
-    } catch (err: any) {
-      toast.error(err.message || "Failed to load tenants");
+    } catch (err: unknown) {
+      toast.error((err instanceof Error ? err.message : null) || "Failed to load tenants");
     } finally {
       setLoading(false);
     }
