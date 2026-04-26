@@ -9,17 +9,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { z } from "zod";
+
+const resetSchema = z.object({
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});
 
 function ResetForm() {
   const { resetPassword } = useAuth();
   const params = useSearchParams();
   const token = params.get("token") || "";
   const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault(); setLoading(true);
+    e.preventDefault();
+    const result = resetSchema.safeParse({ password });
+    if (!result.success) {
+      setPasswordError(result.error.issues[0]?.message || "Invalid password");
+      return;
+    }
+    setPasswordError("");
+    setLoading(true);
     try { await resetPassword(token, password); setDone(true); toast.success("Password reset!"); }
     catch (err: unknown) { toast.error((err instanceof Error ? err.message : null) || "Reset failed"); }
     finally { setLoading(false); }
@@ -34,7 +47,11 @@ function ResetForm() {
             <div className="text-center space-y-4"><p className="text-muted-foreground">Password reset.</p><Link href="/login"><Button>Sign in</Button></Link></div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2"><Label htmlFor="password">New password</Label><Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} /></div>
+              <div className="space-y-2">
+                <Label htmlFor="password">New password</Label>
+                <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                {passwordError && <p className="text-sm text-destructive">{passwordError}</p>}
+              </div>
               <Button type="submit" className="w-full" disabled={loading}>{loading ? "Resetting..." : "Reset password"}</Button>
             </form>
           )}
