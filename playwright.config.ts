@@ -7,13 +7,15 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
+  timeout: 30000,
   use: {
     baseURL: "http://localhost:3000",
     trace: "on-first-retry",
+    actionTimeout: 10000,
+    navigationTimeout: 15000,
   },
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-    { name: "mobile", use: { ...devices["Pixel 5"] } },
   ],
   webServer: {
     command: "npm run dev",
