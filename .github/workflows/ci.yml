@@ -18,7 +18,7 @@ jobs:
       - run: npm ci --legacy-peer-deps
       - run: npm run build
       - name: Type check
-        run: npx tsc --noEmit || true
+        run: npx tsc --noEmit
 
   e2e:
     runs-on: ubuntu-latest
