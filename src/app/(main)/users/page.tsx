@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useAuth } from "@vidwadeseram/auth-ui-shared";
 import { Button } from "@/components/ui/button";
@@ -23,10 +23,10 @@ interface User {
 export default function UsersPage() {
   const { apiClient } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  async function loadUsers() {
+  const loadUsers = useCallback(async () => {
     setLoading(true);
     try {
       const res = await apiClient.get("/api/v1/admin/users") as { data: User[] };
@@ -36,7 +36,9 @@ export default function UsersPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [apiClient]);
+
+  useEffect(() => { loadUsers(); }, [loadUsers]);
 
   const filtered = users.filter((u) => !search || u.email.toLowerCase().includes(search.toLowerCase()));
 
@@ -44,7 +46,7 @@ export default function UsersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Users</h1>
-        <Button onClick={loadUsers} disabled={loading}>{loading ? "Loading..." : "Load Users"}</Button>
+        <Button onClick={loadUsers} disabled={loading}>{loading ? "Loading..." : "Refresh"}</Button>
       </div>
       <Input placeholder="Search users..." value={search} onChange={(e) => setSearch(e.target.value)} className="max-w-sm" />
       <Card>
@@ -63,7 +65,7 @@ export default function UsersPage() {
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
-                  <tr><td colSpan={5} className="text-center p-8 text-muted-foreground">No users loaded. Click &quot;Load Users&quot; to fetch.</td></tr>
+                  <tr><td colSpan={5} className="text-center p-8 text-muted-foreground">{loading ? "Loading..." : "No users found."}</td></tr>
                 ) : filtered.map((u) => (
                   <tr key={u.id} className="border-t">
                     <td className="p-3">{u.email}</td>
